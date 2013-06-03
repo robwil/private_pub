@@ -94,4 +94,5 @@ function buildPrivatePub(doc) {
   return self;
 }
 
+Faye.Transport.WebSocket.isUsable = function($, _, c) { c(false) }; 
 var PrivatePub = buildPrivatePub(document);
