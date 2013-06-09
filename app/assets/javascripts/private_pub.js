@@ -49,14 +49,17 @@ function buildPrivatePub(doc) {
       if (!self.subscriptions.server) {
         self.subscriptions.server = options.server;
       }
-      self.subscriptions[options.channel] = options;
-      self.faye(function(faye) {
-        var sub = faye.subscribe(options.channel, self.handleResponse);
-        self.subscriptionObjects[options.channel] = sub;
-        if (options.subscription) {
-          options.subscription(sub);
-        }
-      });
+      // Make "sign" function idempotent, at the cost of only one listener per channel.
+      if (self.subscriptions[options.channel] == undefined) {
+	      self.subscriptions[options.channel] = options;
+	      self.faye(function(faye) {
+	        var sub = faye.subscribe(options.channel, self.handleResponse);
+	        self.subscriptionObjects[options.channel] = sub;
+	        if (options.subscription) {
+	          options.subscription(sub);
+	        }
+	      });
+	  }
     },
 
     handleResponse: function(message) {
